@@ -1,4 +1,4 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerson2-creator/Universal-GUI-Script/refs/heads/main/RealCode'))()
 
  --Settings GUI
 
@@ -48,6 +48,8 @@ local Window = Rayfield:CreateWindow({
     Image = nil,
  })
 
+ --Speed
+
  local Input = MainTab:CreateInput({
    Name = "WalkSpeed (Default is 16)",
    CurrentValue = "16",
@@ -58,6 +60,8 @@ local Window = Rayfield:CreateWindow({
    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Text)
    end,
 })
+
+   --Jump
 
 local Input = MainTab:CreateInput({
    Name = "Jump power (Default is 50)",
@@ -70,6 +74,8 @@ local Input = MainTab:CreateInput({
    end,
 })
 
+   --Gravity
+
 local Input = MainTab:CreateInput({
    Name = "Gravity (Default is 196.2)",
    CurrentValue = "",
@@ -80,6 +86,8 @@ local Input = MainTab:CreateInput({
    game.Workspace.Gravity = (Text)
    end,
 })
+
+   --No stun
 
 local Input = MainTab:CreateInput({
    Name = "No Stun WalkSpeed (put -1 to decrease)",
@@ -93,6 +101,8 @@ local Input = MainTab:CreateInput({
    end,
 })
 
+   --Sit
+
 local Button = MainTab:CreateButton({
    Name = "Sit Buttom",
    Callback = function()
@@ -100,10 +110,183 @@ local Button = MainTab:CreateButton({
    end,
 })
 
-local Button = MainTab:CreateButton({
-   Name = "Esp",
-   Callback = function()
-      loadstring(game:HttpGet('https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP'))()
-   end,
+   --Noclip
+
+   local player = game.Players.LocalPlayer
+local noClipEnabled = false
+local connections = {} -- Armazena as conexões para desligar depois
+
+-- Função para ativar/desativar o noclip
+local function toggleNoClip(state)
+    noClipEnabled = state
+
+    if noClipEnabled then
+        -- Ativa o noclip, removendo colisão de todas as partes do personagem
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false -- Desativa colisão
+            end
+        end
+
+        -- Conexão para novos objetos que forem adicionados ao personagem
+        local newPartConn = player.Character.DescendantAdded:Connect(function(part)
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end)
+        table.insert(connections, {newPartConn})
+
+    else
+        -- Desativa o noclip, restaurando colisão nas partes do personagem
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true -- Restaura a colisão
+            end
+        end
+
+        -- Desconecta as funções para novos objetos
+        for _, conn in pairs(connections) do
+            conn[1]:Disconnect()
+        end
+        connections = {} -- Reseta a lista de conexões
+    end
+end
+
+-- Toggle para ativar/desativar o Noclip
+local Toggle = MainTab:CreateToggle({
+    Name = "Noclip", -- Nome do Toggle
+    CurrentValue = false, -- Valor inicial
+    Flag = "ToggleNoclip", -- A flag é o identificador para o arquivo de configuração
+    Callback = function(Value)
+        toggleNoClip(Value) -- Chama a função de ativar/desativar Noclip
+    end,
 })
 
+   
+
+   --ESP
+
+local player = game.Players.LocalPlayer
+local espEnabled = false
+local connections = {} -- Armazena as conexões para desligar depois
+
+-- Função para criar ESP em um jogador
+local function createESP(plr)
+    if plr == player then return end -- Evita criar ESP em si mesmo
+
+    local character = plr.Character or plr.CharacterAdded:Wait()
+    local highlight = Instance.new("Highlight")
+    highlight.Parent = character
+    highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Cor vermelha
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.5
+    highlight.OutlineTransparency = 0
+
+    -- Guarda a conexão para remover depois
+    local conn = plr.CharacterAdded:Connect(function(newChar)
+        highlight.Parent = newChar
+    end)
+    table.insert(connections, {plr, highlight, conn})
+end
+
+-- Função para ativar/desativar ESP
+local function toggleESP(state)
+    espEnabled = state
+
+    if espEnabled then
+        -- Ativa o ESP para todos os jogadores
+        for _, plr in pairs(game.Players:GetPlayers()) do
+            createESP(plr)
+        end
+
+        -- Conexão para novos jogadores que entrarem no jogo
+        local newPlayerConn = game.Players.PlayerAdded:Connect(function(plr)
+            createESP(plr)
+        end)
+        table.insert(connections, {nil, nil, newPlayerConn})
+    else
+        -- Remove o ESP de todos os jogadores
+        for _, data in pairs(connections) do
+            if data[2] then data[2]:Destroy() end -- Remove Highlight
+            if data[3] then data[3]:Disconnect() end -- Desconecta eventos
+        end
+        connections = {} -- Reseta a lista
+    end
+end
+
+-- Toggle para ativar/desativar o ESP
+local Toggle = MainTab:CreateToggle({
+    Name = "ESP", -- Nome do Toggle
+    CurrentValue = false, -- Valor inicial
+    Flag = "Toggle2", -- A flag é o identificador para o arquivo de configuração
+    Callback = function(Value)
+        toggleESP(Value) -- Chama a função de ativar/desativar ESP
+    end,
+})
+
+   --Xray
+
+   local player = game.Players.LocalPlayer
+local xrayEnabled = false
+local connections = {} -- Armazena as conexões para desligar depois
+
+-- Função para ativar/desativar o efeito Xray
+local function toggleXray(state)
+    xrayEnabled = state
+
+    if xrayEnabled then
+        -- Ativa o Xray para todos os objetos (exceto o personagem)
+        for _, part in pairs(game.Workspace:GetDescendants()) do
+            if part:IsA("BasePart") and part.Parent ~= player.Character then
+                part.CanCollide = true -- Remove colisão para "ver" através de paredes
+                part.Transparency = 0.5 -- Deixa os objetos parcialmente transparentes
+            end
+        end
+
+        -- Conexão para novos objetos que forem adicionados ao jogo
+        local newPartConn = game.Workspace.DescendantAdded:Connect(function(part)
+            if part:IsA("BasePart") and part.Parent ~= player.Character then
+                part.CanCollide = true
+                part.Transparency = 0.5
+            end
+        end)
+        table.insert(connections, {newPartConn})
+    else
+        -- Desativa o Xray, restaurando a transparência e colisão dos objetos
+        for _, part in pairs(game.Workspace:GetDescendants()) do
+            if part:IsA("BasePart") and part.Parent ~= player.Character then
+                part.CanCollide = true
+                part.Transparency = 0 -- Restaura a transparência original
+            end
+        end
+
+        -- Desconecta a função de novos objetos
+        for _, conn in pairs(connections) do
+            conn[1]:Disconnect()
+        end
+        connections = {} -- Reseta a lista de conexões
+    end
+end
+
+-- Toggle para ativar/desativar o Xray
+local Toggle = MainTab:CreateToggle({
+    Name = "Xray", -- Nome do Toggle
+    CurrentValue = false, -- Valor inicial
+    Flag = "ToggleXray", -- A flag é o identificador para o arquivo de configuração
+    Callback = function(Value)
+        toggleXray(Value) -- Chama a função de ativar/desativar Xray
+    end,
+})
+
+   --Fly
+
+   local Button = MainTab:CreateButton({
+      Name = "Fly",
+      Callback = function()
+
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/Emerson2-creator/Universal-GUI-Script/refs/heads/main/Fly%20Script%20GUI"))()
+         
+      end,
+   })
+
+   
