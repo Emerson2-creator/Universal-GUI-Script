@@ -36,9 +36,12 @@ local Window = Rayfield:CreateWindow({
     }
  })
 
-  --Scripts
+  --Tab
 
  local MainTab = Window:CreateTab("🏠Home", nil) -- Title, Image
+
+ --Section
+
  local MainSection = MainTab:CreateSection("Basic Settings")
 
  Rayfield:Notify({
@@ -289,4 +292,62 @@ local Toggle = MainTab:CreateToggle({
       end,
    })
 
-   
+   --Spin
+
+   local spinSpeed = 50  -- Velocidade da rotação
+
+-- Criação do toggle para ativar/desativar o Spin
+local Toggle = MainTab:CreateToggle({
+    Name = "Spin",  -- Nome do toggle
+    CurrentValue = false,  -- Valor inicial (desligado)
+    Flag = "SpinToggle",  -- Flag para configurar a persistência
+    Callback = function(Value)
+        local plr = game:GetService("Players").LocalPlayer
+        repeat task.wait() until plr.Character
+        local humRoot = plr.Character:WaitForChild("HumanoidRootPart")
+        plr.Character:WaitForChild("Humanoid").AutoRotate = false
+
+        if Value then
+            -- Ativa a rotação
+            local velocity = Instance.new("AngularVelocity")
+            velocity.Attachment0 = humRoot:WaitForChild("RootAttachment")
+            velocity.MaxTorque = math.huge
+            velocity.AngularVelocity = Vector3.new(0, spinSpeed, 0)
+            velocity.Parent = humRoot
+            velocity.Name = "Spinbot"
+        else
+            -- Desativa a rotação
+            for _, child in pairs(humRoot:GetChildren()) do
+                if child.Name == "Spinbot" then
+                    child:Destroy()
+                end
+            end
+        end
+    end
+})
+
+
+local MainSection = MainTab:CreateSection("SUS Script")
+
+    --SUS Scripts 
+
+    local Button = MainTab:CreateButton({
+        Name = "Jerk (R6, Not by me)",
+        Callback = function()
+               loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))("Spider Script")
+        end,
+     })
+
+     local Button = MainTab:CreateButton({
+        Name = "Sus GUI (Not by me)",
+        Callback = function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/FWwdST5Y"))()
+        end,
+     })
+
+     local Button = MainTab:CreateButton({
+        Name = "Freaky GUI (Not by me)",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ShutUpJamesTheLoser/freaky/refs/heads/main/fe", true))()
+        end,
+     })
