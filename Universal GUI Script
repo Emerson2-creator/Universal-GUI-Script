@@ -1,0 +1,109 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+ --Settings GUI
+
+local Window = Rayfield:CreateWindow({
+    Name = "Universal GUI",
+    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+    LoadingTitle = "Universal Hub",
+    LoadingSubtitle = "By BOITONETO",
+    Theme = "DarkBlue", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+ 
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+ 
+    ConfigurationSaving = {
+       Enabled = false,
+       FolderName = nil, -- Create a custom folder for your hub/game
+       FileName = "Just Hub"
+    },
+ 
+    Discord = {
+       Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+       Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+    },
+ 
+    KeySystem = false, -- Set this to true to use our key system
+    KeySettings = {
+       Title = "Untitled",
+       Subtitle = "Key System",
+       Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+       FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+       SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+       Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+    }
+ })
+
+  --Scripts
+
+ local MainTab = Window:CreateTab("🏠Home", nil) -- Title, Image
+ local MainSection = MainTab:CreateSection("Basic Settings")
+
+ Rayfield:Notify({
+    Title = "You executed the script",
+    Content = "Very good GUI",
+    Duration = 4.5,
+    Image = nil,
+ })
+
+ local Input = MainTab:CreateInput({
+   Name = "WalkSpeed (Default is 16)",
+   CurrentValue = "16",
+   PlaceholderText = "Put the WalkSpeed",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input1",
+   Callback = function(Text)
+   game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Text)
+   end,
+})
+
+local Input = MainTab:CreateInput({
+   Name = "Jump power (Default is 50)",
+   CurrentValue = "50",
+   PlaceholderText = "Put the JumpPower",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input2",
+   Callback = function(Text)
+   game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Text)
+   end,
+})
+
+local Input = MainTab:CreateInput({
+   Name = "Gravity (Default is 196.2)",
+   CurrentValue = "",
+   PlaceholderText = "Put the gravity",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input3",
+   Callback = function(Text)
+   game.Workspace.Gravity = (Text)
+   end,
+})
+
+local Input = MainTab:CreateInput({
+   Name = "No Stun WalkSpeed (put -1 to decrease)",
+   CurrentValue = "",
+   PlaceholderText = "No Stun WalkSpeed",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input4",
+   Callback = function(Text)
+
+      function isNumber(str) if tonumber(str) ~= nil or str == 'inf' then return true end end local tspeed = (Text) local hb = game:GetService("RunService").Heartbeat local tpwalking = true local player = game:GetService("Players") local lplr = player.LocalPlayer local chr = lplr.Character local hum = chr and chr:FindFirstChildWhichIsA("Humanoid") while tpwalking and hb:Wait() and chr and hum and hum.Parent do if hum.MoveDirection.Magnitude > 0 then if tspeed and isNumber(tspeed) then chr:TranslateBy(hum.MoveDirection * tonumber(tspeed)) else chr:TranslateBy(hum.MoveDirection) end end end
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Sit Buttom",
+   Callback = function()
+   game.Players.LocalPlayer.Character.Humanoid.Sit = true
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Esp",
+   Callback = function()
+      loadstring(game:HttpGet('https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP'))()
+   end,
+})
+
